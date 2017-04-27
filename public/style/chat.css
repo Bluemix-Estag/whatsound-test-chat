@@ -209,7 +209,7 @@ body {
     
     z-index: -1;
     opacity: 0;
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-fill-mode: forwards;
     width: 100%;
     animation-name: show_chat;
