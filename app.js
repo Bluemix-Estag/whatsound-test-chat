@@ -5,7 +5,8 @@
 var express = require('express'),
     routes = require('./routes'),
     http = require('http'),
-    path = require('path'),
+    path = require('path')
+    request = require('request'),
     fs = require('fs');
 var cfenv = require('cfenv');
 
@@ -110,12 +111,41 @@ if (appEnv.isLocal) {
 
 
 
+app.post('/api/watson',function(req,res){
+    
+    var options = {
+//        uri: "https://whatsound-orchestrator.mybluemix.net/WhatSound",
+        uri : 'http://localhost:4000/WhatSound',
+          headers: {
+                "content-type": "application/json",
+            },
+        method: "POST",
+        json: req.body
+      
+    }
+    
+    function callback(error, response, body) {
+            if (!error && response.statusCode == 200) {
+                // Treat results and delegate to APIs..
+                
+                  var context = body.context;
+//            var owner = req.user.username;
+                console.log(JSON.stringify(body))
+            res.status(200).json(body);
+            } else {
+                //Return error message
+            console.log("error :" +JSON.stringify(error));
+            res.status(500).json(error);
+            }
+        }
+        request(options, callback);
+})
 
 
 // =====================================
 // WATSON CONVERSATION FOR ANA =========
 // =====================================
-app.post('/api/watson', function (req, res) {
+app.post('/api/watsonas', function (req, res) {
     processChatMessage(req, res);
 }); // End app.post 'api/ana'
 function processChatMessage(req, res) {
@@ -149,6 +179,38 @@ function processChatMessage(req, res) {
         }
     });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

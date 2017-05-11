@@ -61,10 +61,42 @@ function userMessage(message) {
             text = response.output.text; // Only display the first response
             context = response.context; // Store the context for next round of questions
             console.log("Got response from Ana: ", JSON.stringify(response));
+            
+            
+            if(context.iframeTrack){
+                displaySpotify(context.trackURI,watson);
+                delete context.iframeTrack;
+            }
+            if(context.clipeID){
+                displayVideo(context.clipeID,watson);
+                delete context.clipeID;
+            }
+            
+            if(context.showLyrics){
+                displayMessage(context.showLyrics,watson);
+                displayMessage("Aproveite!",watson);
+                context ={};
+                
+                
+            }
+            
+            if(context.artistAlbums && context.isArtist){
+                
+                for(var album in context.artistAlbums){
+                    displayMessage(context.artistAlbums[album].name,watson);
+                    
+                }
+                delete context.isArtist;
+            }
+            
+//            if(context.showLyrics){
+                
+//            }
            
             for (var txt in text) {
                 displayMessage(text[txt], watson);
             }
+            
 
         }
         else {
@@ -119,5 +151,32 @@ function displayMessage(text, user) {
     chat_body.scrollTop = chat_body.scrollHeight;
 }
 
+
+
+function displaySpotify(uri, watson) {
+    uri = uri.replace(new RegExp('\\"', "g"), "");
+    var chat_body = document.getElementById('chat-body');
+    var bubble = document.createElement('div');
+    var main = document.getElementById('main');
+    bubble.innerHTML += '<iframe src="https://embed.spotify.com/?uri=' + uri + '" width="270" height="80" frameborder="0" allowtransparency="true"></iframe>';
+    chat_body.appendChild(bubble);
+    chat_body.scrollTop = chat_body.scrollHeight; // Move chat down to the last message displayed
+    document.getElementById('chatInput').focus();
+    
+}
+
+function displayVideo(videoId, watson) {
+    
+    var chat_body = document.getElementById('chat-body');
+    var bubble = document.createElement('div');
+    var main = document.getElementById('main');
+    bubble.innerHTML += '<iframe src="http://www.youtube.com/embed/'+videoId+'" width="360" height="260"></iframe>';
+    
+   
+   
+   chat_body.appendChild(bubble);
+    chat_body.scrollTop = chat_body.scrollHeight; // Move chat down to the last message displayed
+    document.getElementById('chatInput').focus();
+}
 
 userMessage('');
